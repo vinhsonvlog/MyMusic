@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Tìm kiếm mặc định với loading
     showLoadingState();
-    const defaultTracks = await searchYouTubeMusic('vietnamese pop songs 2024');
+    const defaultTracks = await searchYouTubeMusic('playlist nhạc trẻ');
     displayTracks(defaultTracks);
     
     // Thiết lập event listeners
