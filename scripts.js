@@ -72,35 +72,90 @@ async function searchYouTubeMusic(query) {
     try {
         showSearchingState(query);
         
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${encodeURIComponent(query + ' music')}&type=video&key=${YOUTUBE_API_KEY}`);
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=12&q=${encodeURIComponent(query + ' music')}&type=video&key=${YOUTUBE_API_KEY}`);
         
+        console.log('API Response status:', response.status);
+        console.log('API Response headers:', response.headers);
+        
+        // Kiểm tra chi tiết lỗi
         if (!response.ok) {
-            throw new Error('API request failed');
+            const errorText = await response.text();
+            console.error('API Error details:', errorText);
+            
+            // Parse error để hiển thị thông báo cụ thể
+            try {
+                const errorData = JSON.parse(errorText);
+                console.error('Parsed error:', errorData);
+                
+                if (errorData.error) {
+                    if (errorData.error.code === 403) {
+                        showNotification('❌ API Key không hợp lệ hoặc chưa được kích hoạt', 'error');
+                    } else if (errorData.error.code === 400) {
+                        showNotification('❌ Yêu cầu API không đúng format', 'error');
+                    } else {
+                        showNotification(`❌ Lỗi API: ${errorData.error.message}`, 'error');
+                    }
+                }
+            } catch (parseError) {
+                showNotification('❌ Lỗi không xác định từ YouTube API', 'error');
+            }
+            
+            throw new Error(`API request failed: ${response.status}`);
         }
         
         const data = await response.json();
+        console.log('API Data received:', data);
+        console.log('Items count:', data.items?.length || 0);
+        
+        // Kiểm tra nếu không có items
+        if (!data.items || data.items.length === 0) {
+            console.log('No items found in API response');
+            showNotification('🔍 Không tìm thấy kết quả cho từ khóa này', 'warning');
+            return [];
+        }
+        
+        // Log chi tiết từng item
+        data.items.forEach((item, index) => {
+            console.log(`Item ${index}:`, {
+                id: item.id?.videoId,
+                title: item.snippet?.title,
+                channel: item.snippet?.channelTitle
+            });
+        });
         
         // Lấy video IDs để fetch duration
         const videoIds = data.items.map(item => item.id.videoId).join(',');
+        console.log('Video IDs for duration fetch:', videoIds);
         
         // Fetch duration cho tất cả videos
         const durationResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${YOUTUBE_API_KEY}`);
+        
+        if (!durationResponse.ok) {
+            console.warn('Duration fetch failed, using default durations');
+        }
+        
         const durationData = await durationResponse.json();
+        console.log('Duration data:', durationData);
         
         const tracks = data.items.map((item, index) => {
-            const duration = durationData.items[index]?.contentDetails?.duration || 'PT0S';
+            const duration = durationData.items?.[index]?.contentDetails?.duration || 'PT3M30S';
             const parsedDuration = parseDuration(duration);
             
-            return {
+            const track = {
                 id: item.id.videoId,
                 title: item.snippet.title.replace(/[\[\](){}]/g, ''),
                 artist: item.snippet.channelTitle,
-                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default.url,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url || item.snippet.thumbnails.medium?.url,
                 embedUrl: `https://www.youtube.com/embed/${item.id.videoId}?autoplay=1&controls=0&enablejsapi=1`,
                 duration: parsedDuration.seconds,
                 durationText: parsedDuration.text
             };
+            
+            console.log(`Processed track ${index}:`, track);
+            return track;
         });
+        
+        console.log('Final processed tracks:', tracks);
         
         // Lưu vào cache
         searchCache.set(query, tracks);
@@ -595,47 +650,111 @@ function updateCardStates() {
 
 // Search và event listeners (giữ nguyên code cũ nhưng thêm feedback)
 function createSearchSection() {
-    const container = document.querySelector('.container');
-    const title = document.querySelector('.title');
-    
-    if (!container || !title || document.querySelector('.search-section')) return;
-    
-    const searchSection = document.createElement('div');
-    searchSection.className = 'search-section';
-    searchSection.innerHTML = `
-        <input type="text" id="searchInput" placeholder="Tìm kiếm bài hát, nghệ sĩ trên YouTube..." autocomplete="off">
-        <button id="searchBtn"><i class="fas fa-search"></i></button>
-        <div class="search-suggestions" id="searchSuggestions" style="display: none;"></div>
-    `;
-    
-    title.insertAdjacentElement('afterend', searchSection);
-    
-    // Thêm search suggestions
+    // Không tạo search section nữa vì HTML đã có sẵn
+    // Chỉ setup search suggestions cho element có sẵn
     setupSearchSuggestions();
 }
 
 function setupSearchSuggestions() {
     const searchInput = document.getElementById('searchInput');
-    const suggestions = ['vpop 2024', 'ballad vietnam', 'rap vietnam', 'acoustic covers', 'chill music'];
+    const suggestionDiv = document.getElementById('searchSuggestions');
+    
+    // Kiểm tra nếu elements không tồn tại
+    if (!searchInput || !suggestionDiv) {
+        console.log('Search elements not found');
+        return;
+    }
+    
+    const suggestions = [
+        { text: 'vpop 2024', icon: 'fas fa-fire' },
+        { text: 'ballad vietnam', icon: 'fas fa-heart' },
+        { text: 'rap vietnam', icon: 'fas fa-microphone' },
+        { text: 'acoustic covers', icon: 'fas fa-guitar' },
+        { text: 'chill music', icon: 'fas fa-leaf' },
+        { text: 'kpop hits', icon: 'fas fa-star' },
+        { text: 'lofi study', icon: 'fas fa-book' }
+    ];
     
     searchInput.addEventListener('focus', () => {
-        const suggestionDiv = document.getElementById('searchSuggestions');
+        console.log('Search input focused'); // Debug log
+        
         suggestionDiv.innerHTML = suggestions.map(s => 
-            `<div class="suggestion" onclick="searchSuggestion('${s}')">${s}</div>`
+            `<div class="suggestion" onclick="searchSuggestion('${s.text}')">
+                <i class="${s.icon}"></i>
+                <span>${s.text}</span>
+            </div>`
         ).join('');
+        
+        // Show with animation
         suggestionDiv.style.display = 'block';
+        setTimeout(() => {
+            suggestionDiv.classList.add('show');
+        }, 10);
     });
     
-    searchInput.addEventListener('blur', () => {
+    searchInput.addEventListener('blur', (e) => {
+        // Delay để cho phép click vào suggestion
         setTimeout(() => {
-            document.getElementById('searchSuggestions').style.display = 'none';
+            suggestionDiv.classList.remove('show');
+            setTimeout(() => {
+                if (!suggestionDiv.classList.contains('show')) {
+                    suggestionDiv.style.display = 'none';
+                }
+            }, 300);
         }, 200);
     });
+    
+    // Ẩn suggestions khi click ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-section')) {
+            suggestionDiv.classList.remove('show');
+            setTimeout(() => {
+                suggestionDiv.style.display = 'none';
+            }, 300);
+        }
+    });
+    
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+        const suggestions = suggestionDiv.querySelectorAll('.suggestion');
+        const currentActive = suggestionDiv.querySelector('.suggestion.active');
+        let activeIndex = Array.from(suggestions).indexOf(currentActive);
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentActive) currentActive.classList.remove('active');
+            activeIndex = activeIndex < suggestions.length - 1 ? activeIndex + 1 : 0;
+            suggestions[activeIndex]?.classList.add('active');
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentActive) currentActive.classList.remove('active');
+            activeIndex = activeIndex > 0 ? activeIndex - 1 : suggestions.length - 1;
+            suggestions[activeIndex]?.classList.add('active');
+        } else if (e.key === 'Enter' && currentActive) {
+            e.preventDefault();
+            currentActive.click();
+        } else if (e.key === 'Escape') {
+            suggestionDiv.classList.remove('show');
+            searchInput.blur();
+        }
+    });
+    
+    console.log('Search suggestions setup complete'); // Debug log
 }
 
 function searchSuggestion(query) {
-    document.getElementById('searchInput').value = query;
-    performSearch();
+    const searchInput = document.getElementById('searchInput');
+    const suggestionDiv = document.getElementById('searchSuggestions');
+    
+    searchInput.value = query;
+    suggestionDiv.classList.remove('show');
+    
+    // Add feedback animation
+    searchInput.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        searchInput.style.transform = 'scale(1)';
+        performSearch();
+    }, 150);
 }
 
 async function performSearch() {

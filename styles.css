@@ -724,10 +724,74 @@ body {
     }
 }
 
-/* Thêm vào cuối file styles.css */
+/* Mobile optimizations */
+.mobile-device {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Mobile play button enhancement */
+@media (max-width: 768px) {
+    .play-btn {
+        width: 80px !important;
+        height: 80px !important;
+        font-size: 28px !important;
+        /* Tăng kích thước cho dễ tap */
+    }
+    
+    .play-overlay {
+        /* Luôn hiển thị trên mobile */
+        opacity: 0.8 !important;
+    }
+    
+    .card:active {
+        transform: scale(0.98);
+    }
+    
+    /* Controls bar mobile enhancement */
+    .controls button {
+        min-width: 44px !important;
+        min-height: 44px !important;
+        /* Apple's recommended minimum tap target */
+    }
+    
+    /* Touch feedback */
+    .card:active,
+    .play-btn:active,
+    .controls button:active {
+        opacity: 0.8;
+        transform: scale(0.95);
+    }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-appearance: none) {
+    .music-control-bar {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* Fix iOS viewport issues */
+    body {
+        position: relative;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Android specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .play-btn {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
 
 /* Search Section */
 .search-section {
+    position: relative !important; /* Quan trọng: phải có position relative */
     display: flex;
     gap: 15px;
     margin: 30px 0 40px 0;
@@ -866,8 +930,6 @@ body {
         padding: 40px 15px;
     }
 }
-
-/* Thêm vào cuối file */
 
 /* Enhanced Loading States */
 .loading-enhanced {
@@ -1071,35 +1133,63 @@ body {
 
 /* Search Suggestions */
 .search-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.9);
+    position: absolute !important;
+    top: 100% !important; /* Đặt ngay dưới search section */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 400px;
+    max-width: 90vw;
+    background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 5px;
-    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000 !important;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    /* Hide by default */
+    display: none !important;
+    opacity: 0;
+    transition: all 0.3s ease;
 }
-
+.search-suggestions.show {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
 .suggestion {
     padding: 12px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
 
 .suggestion:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #4ecdc4;
+    padding-left: 15px;
 }
 
 .suggestion:last-child {
     border-bottom: none;
 }
+.suggestion i {
+    margin-right: 8px;
+    color: #ff6b6b;
+    min-width: 16px;
+}
 
+.suggestion.active {
+    background: rgba(255, 107, 107, 0.2) !important;
+    color: #ff6b6b !important;
+    border-left: 3px solid #ff6b6b;
+}
 /* Responsive cho loading states */
 @media (max-width: 768px) {
     .loading-enhanced, .searching-state, .error-state {
@@ -1121,48 +1211,18 @@ body {
     }
 }
 
-/* Thêm vào cuối file */
-
-/* Loading state cho play button */
-.play-btn .fa-spinner {
-    animation: spin 1s linear infinite !important;
-}
-
-.play-btn[style*="pointer-events: none"] {
-    opacity: 0.7;
-    cursor: not-allowed !important;
-}
-
-/* Ngừng animation rotate khi đang loading */
-.play-btn:has(.fa-spinner):hover {
-    transform: scale(1.1) !important; /* Không rotate */
-}
-
-/* Tăng cường hiệu ứng loading */
-.card.loading {
-    border-color: rgba(255, 107, 107, 0.8);
-    box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4);
-    transform: translateY(-5px);
-}
-
-.card.loading .play-btn {
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    animation: pulse 1s infinite !important;
-}
-
-/* Override play button hover khi loading */
-.play-btn .fa-spinner:hover {
-    transform: none !important;
-}
-
-/* Footer styles */
+/* Footer styles - Enhanced Version */
 .app-footer {
-    margin-top: 60px;
-    padding: 30px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
+    margin-top: 80px;
+    padding: 40px 20px 20px 20px;
+    background: linear-gradient(135deg, 
+        rgba(255, 107, 107, 0.1) 0%, 
+        rgba(78, 205, 196, 0.1) 50%, 
+        rgba(69, 183, 209, 0.1) 100%
+    );
+    backdrop-filter: blur(30px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px 20px 0 0;
+    border-radius: 30px 30px 0 0;
     position: relative;
     overflow: hidden;
 }
@@ -1173,140 +1233,242 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(90deg, 
         transparent, 
-        #ff6b6b 20%, 
-        #4ecdc4 40%, 
-        #96ceb4 60%, 
-        #ffd93d 80%, 
+        #ff6b6b 25%, 
+        #4ecdc4 50%, 
+        #96ceb4 75%, 
         transparent
     );
-    animation: footerGlow 3s ease-in-out infinite;
+    animation: footerGlow 4s ease-in-out infinite;
 }
 
 @keyframes footerGlow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+    0%, 100% { 
+        opacity: 0.6;
+        transform: translateX(-100%);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateX(100%);
+    }
 }
 
 .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
     max-width: 1200px;
     margin: 0 auto;
-    gap: 30px;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
 .creator-info {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .creator-badge {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    border-radius: 25px;
+    gap: 12px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #96ceb4);
+    background-size: 200% 200%;
+    border-radius: 50px;
     color: white;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    transition: all 0.3s ease;
-    animation: creatorPulse 4s ease-in-out infinite;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 
+        0 8px 32px rgba(255, 107, 107, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    animation: creatorGradient 6s ease-in-out infinite;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes creatorPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+.creator-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.creator-badge:hover::before {
+    left: 100%;
+}
+
+@keyframes creatorGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .creator-badge:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 25px rgba(255, 107, 107, 0.5);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 
+        0 15px 40px rgba(255, 107, 107, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .creator-badge i {
-    font-size: 1.2rem;
-    animation: codeIcon 2s ease-in-out infinite;
+    font-size: 1.4rem;
+    animation: codeFloat 3s ease-in-out infinite;
 }
 
-@keyframes codeIcon {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
+@keyframes codeFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(-2deg); }
+    75% { transform: translateY(3px) rotate(2deg); }
+}
+
+.creator-badge span {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.creator-badge strong {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .social-links {
     display: flex;
-    gap: 15px;
+    gap: 12px;
 }
 
 .social-links a {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    color: white;
+    gap: 10px;
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     font-size: 14px;
     font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-links a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.social-links a:hover::before {
+    transform: translateX(100%);
 }
 
 .facebook-link:hover {
-    background: #1877f2;
+    background: linear-gradient(135deg, #1877f2, #42a5f5);
     border-color: #1877f2;
+    color: white;
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4);
-}
-
-.email-link:hover {
-    background: #ea4335;
-    border-color: #ea4335;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(234, 67, 53, 0.4);
+    box-shadow: 0 10px 30px rgba(24, 119, 242, 0.4);
 }
 
 .social-links i {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.social-links a:hover i {
+    transform: scale(1.2) rotate(5deg);
 }
 
 .app-info {
     text-align: right;
-    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .version {
-    font-size: 14px;
-    font-weight: bold;
-    color: #4ecdc4;
-    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(45deg, #4ecdc4, #96ceb4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+    animation: versionGlow 3s ease-in-out infinite;
+}
+
+@keyframes versionGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
 }
 
 .copyright {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    position: relative;
+}
+
+.copyright::before {
+    content: '✨';
+    margin-right: 5px;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+    .app-footer {
+        margin-top: 60px;
+        padding: 30px 20px 20px 20px;
+    }
+    
     .footer-content {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        gap: 30px;
         text-align: center;
-        gap: 20px;
     }
     
     .creator-info {
         align-items: center;
+    }
+    
+    .creator-badge {
+        font-size: 14px;
+        padding: 14px 20px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        max-width: 280px;
+    }
+    
+    .creator-badge strong {
+        font-size: 16px;
     }
     
     .social-links {
@@ -1318,76 +1480,72 @@ body {
         text-align: center;
     }
     
-    .creator-badge {
-        font-size: 14px;
-        padding: 10px 16px;
-    }
-    
     .social-links a {
-        padding: 8px 12px;
+        padding: 10px 16px;
         font-size: 13px;
     }
 }
 
 @media (max-width: 480px) {
     .app-footer {
+        padding: 25px 15px 15px 15px;
         margin-top: 40px;
-        padding: 20px 15px;
     }
     
     .creator-badge {
-        flex-direction: column;
-        gap: 5px;
-        text-align: center;
+        padding: 12px 16px;
+        font-size: 13px;
+        width: 100%;
+        max-width: 260px;
+    }
+    
+    .creator-badge strong {
+        font-size: 15px;
     }
     
     .social-links {
         flex-direction: column;
         width: 100%;
+        align-items: center;
     }
     
     .social-links a {
         justify-content: center;
         width: 100%;
-        max-width: 200px;
+        max-width: 220px;
+        padding: 12px 20px;
+    }
+    
+    .version {
+        font-size: 14px;
+    }
+    
+    .copyright {
+        font-size: 12px;
     }
 }
 
-/* Floating creator badge (tùy chọn) */
-.floating-creator {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 25px;
-    font-size: 12px;
-    font-weight: bold;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: none; /* Ẩn mặc định */
+/* Thêm hiệu ứng hover cho toàn bộ footer */
+.app-footer:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 107, 107, 0.15) 0%, 
+        rgba(78, 205, 196, 0.15) 50%, 
+        rgba(69, 183, 209, 0.15) 100%
+    );
 }
 
-.floating-creator:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+/* Thêm animation khi scroll đến footer */
+.app-footer.in-view {
+    animation: footerSlideUp 0.8s ease-out;
 }
 
-.floating-creator.show {
-    display: block;
-    animation: floatIn 0.5s ease;
-}
-
-@keyframes floatIn {
+@keyframes footerSlideUp {
     from {
-        transform: translateY(100px);
         opacity: 0;
+        transform: translateY(50px);
     }
     to {
-        transform: translateY(0);
         opacity: 1;
+        transform: translateY(0);
     }
 }

@@ -18,7 +18,12 @@
         <h1 class="title">My Music Collection</h1>
         
         <!-- Search section sẽ được tạo bằng JavaScript -->
-        
+        <div class="search-section" id="searchSection">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm bài hát, nghệ sĩ trên YouTube..." autocomplete="off">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+            <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+
         <div class="music-cards" id="musicCards">
             <!-- Cards sẽ được tạo động từ YouTube API -->
         </div>
