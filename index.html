@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Music - YouTube Edition</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-section">
+            <h2 class="welcome-text">🎵 Chào mừng bạn đến với thế giới âm nhạc! 🎵</h2>
+            <p class="welcome-subtitle">Khám phá hàng triệu bài hát trên YouTube</p>
+        </div>
+        
+        <h1 class="title">My Music Collection</h1>
+        
+        <!-- Search section sẽ được tạo bằng JavaScript -->
+        
+        <div class="music-cards" id="musicCards">
+            <!-- Cards sẽ được tạo động từ YouTube API -->
+        </div>
+
+        <!-- Music control bar -->
+        <div class="music-control-bar" id="musicControlBar">
+            <div class="control-content">
+                <div class="song-info">
+                    <img id="currentSongImage" src="" alt="" style="display: none;">
+                    <div class="song-details">
+                        <div id="currentSongTitle">Chọn một bài hát để phát</div>
+                        <div id="currentSongArtist">Tìm kiếm và nhấn play</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="shuffleBtn" title="Phát ngẫu nhiên"><i class="fas fa-random"></i></button>
+                    <button id="prevBtn" title="Bài trước"><i class="fas fa-step-backward"></i></button>
+                    <button id="playPauseBtn" title="Phát/Tạm dừng"><i class="fas fa-play"></i></button>
+                    <button id="nextBtn" title="Bài tiếp"><i class="fas fa-step-forward"></i></button>
+                    <button id="repeatBtn" title="Lặp lại"><i class="fas fa-redo"></i></button>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-container">
+                        <span id="currentTime">0:00</span>
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+                
+                <div class="volume-section">
+                    <button id="muteBtn" title="Tắt/Bật âm thanh">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="volume-slider-container">
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
