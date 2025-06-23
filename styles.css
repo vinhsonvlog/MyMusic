@@ -1154,3 +1154,240 @@ body {
 .play-btn .fa-spinner:hover {
     transform: none !important;
 }
+
+/* Footer styles */
+.app-footer {
+    margin-top: 60px;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        #ff6b6b 20%, 
+        #4ecdc4 40%, 
+        #96ceb4 60%, 
+        #ffd93d 80%, 
+        transparent
+    );
+    animation: footerGlow 3s ease-in-out infinite;
+}
+
+@keyframes footerGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.creator-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.creator-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    transition: all 0.3s ease;
+    animation: creatorPulse 4s ease-in-out infinite;
+}
+
+@keyframes creatorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.creator-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(255, 107, 107, 0.5);
+}
+
+.creator-badge i {
+    font-size: 1.2rem;
+    animation: codeIcon 2s ease-in-out infinite;
+}
+
+@keyframes codeIcon {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.facebook-link:hover {
+    background: #1877f2;
+    border-color: #1877f2;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4);
+}
+
+.email-link:hover {
+    background: #ea4335;
+    border-color: #ea4335;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(234, 67, 53, 0.4);
+}
+
+.social-links i {
+    font-size: 1.1rem;
+}
+
+.app-info {
+    text-align: right;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.version {
+    font-size: 14px;
+    font-weight: bold;
+    color: #4ecdc4;
+    margin-bottom: 5px;
+}
+
+.copyright {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .creator-info {
+        align-items: center;
+    }
+    
+    .social-links {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .app-info {
+        text-align: center;
+    }
+    
+    .creator-badge {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+    
+    .social-links a {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-footer {
+        margin-top: 40px;
+        padding: 20px 15px;
+    }
+    
+    .creator-badge {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    .social-links {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .social-links a {
+        justify-content: center;
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Floating creator badge (tùy chọn) */
+.floating-creator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none; /* Ẩn mặc định */
+}
+
+.floating-creator:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+}
+
+.floating-creator.show {
+    display: block;
+    animation: floatIn 0.5s ease;
+}
+
+@keyframes floatIn {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

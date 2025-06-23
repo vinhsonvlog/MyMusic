@@ -832,3 +832,37 @@ window.addEventListener('beforeunload', () => {
     if (loadingTimeout) clearTimeout(loadingTimeout);
     if (progressInterval) clearInterval(progressInterval);
 });
+
+// Thêm floating creator badge khi scroll
+window.addEventListener('scroll', () => {
+    const footer = document.querySelector('.app-footer');
+    const floatingBadge = document.querySelector('.floating-creator');
+    
+    if (!footer || !floatingBadge) return;
+    
+    const footerRect = footer.getBoundingClientRect();
+    const isFooterVisible = footerRect.top < window.innerHeight;
+    
+    if (isFooterVisible) {
+        floatingBadge.classList.remove('show');
+    } else {
+        floatingBadge.classList.add('show');
+    }
+});
+
+// Thêm floating badge vào DOM (nếu muốn)
+function createFloatingBadge() {
+    const badge = document.createElement('div');
+    badge.className = 'floating-creator';
+    badge.innerHTML = `
+        <i class="fas fa-code"></i>
+        VinhSon
+    `;
+    badge.onclick = () => {
+        document.querySelector('.app-footer').scrollIntoView({ behavior: 'smooth' });
+    };
+    document.body.appendChild(badge);
+}
+
+// Gọi trong DOMContentLoaded nếu muốn floating badge
+// createFloatingBadge();
